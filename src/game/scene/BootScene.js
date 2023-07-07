@@ -10,6 +10,9 @@ import laser from '../../assets/spritesheets/bullet.png'
 import audio_laser from '../../assets/audio/laser.mp3'
 import audio_explotion from '../../assets/audio/explotion.mp3'
 import audio_pickup from '../../assets/audio/pickup.mp3'
+import heart from '../../assets/spritesheets/heart_full.png'
+import half_heart from '../../assets/spritesheets/heart_half.png'
+import empty_heart from '../../assets/spritesheets/heart_empty.png'
 
 export default class BootScene extends Phaser.Scene {
     constructor(){
@@ -47,6 +50,22 @@ export default class BootScene extends Phaser.Scene {
           frameWidth: 32,
           frameHeight: 32
         })
+
+        this.load.spritesheet('heart', heart, {
+          frameWidth: 16,
+          frameHeight: 16
+        })
+
+        this.load.spritesheet('half_heart', half_heart, {
+          frameWidth: 16,
+          frameHeight: 16
+        })
+        
+        this.load.spritesheet('empty_heart', empty_heart, {
+          frameWidth: 16,
+          frameHeight: 16
+        })
+
         // this.load.image('laser', laser)
         this.load.audio('laser_effect', audio_laser)
         this.load.audio('explotion_effect', audio_explotion)
