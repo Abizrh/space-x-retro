@@ -7,7 +7,7 @@ export default class PlayGame extends Phaser.Scene {
   }
 
   create() {
-    this.background = this.add.tileSprite(0, 0, 256, 272, "background");
+    this.background = this.add.tileSprite(0, 0, this.game.config.width, this.game.config.height, "background");
     // this.beam = this.add.image(200, 300, 'laser')
     // this.beam.setScale(0)
     this.background.setOrigin(0, 0);
@@ -39,9 +39,26 @@ export default class PlayGame extends Phaser.Scene {
     this.score = 0;
     this.scoreBoard = this.add.text(10, 5, "SCORE", { fill: "yellow" }, 16);
 
-    this.laserEffect = this.sound.add('laser_effect')
-    this.explotionEffect = this.sound.add('explotion_effect')
-    this.pickupEffect = this.sound.add('pickup_effect')
+    // emitter
+
+    // const emitter = new Phaser.Events.EventEmitter()
+
+    // emitter.on('add-heart', this.addHeart, this)
+
+    // emitter.emit('add-heart', 150, 10);
+    // emitter.emit('add-heart', 170, 10);
+    // emitter.emit('add-heart', 190, 10);
+
+    for (let i = 0; i <= 3; i++) {
+      var x = Phaser.Math.Between(0, 800);
+      var y = Phaser.Math.Between(0, 600);
+      this.heart = this.add.sprite(x, y, "heart");
+      this.heart.setInteractive()
+    }
+
+    this.laserEffect = this.sound.add("laser_effect");
+    this.explotionEffect = this.sound.add("explotion_effect");
+    this.pickupEffect = this.sound.add("pickup_effect");
 
     this.powerUps = this.physics.add.group();
 
@@ -94,7 +111,9 @@ export default class PlayGame extends Phaser.Scene {
       this.powerUps,
       (player, powerUp) => {
         powerUp.disableBody(true, true);
-        this.pickupEffect.play()
+        this.score += 1000;
+        this.scoreBoard.text = "SCORE " + this.score || 0;
+        // this.pickupEffect.play()
       },
       null,
       this
@@ -133,7 +152,7 @@ export default class PlayGame extends Phaser.Scene {
     this.movePlayer();
 
     if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-      if(this.player.active) this.shootBeam()
+      if (this.player.active) this.shootBeam();
     }
 
     for (let i = 0; i < this.projectiles.getChildren().length; i++) {
@@ -144,19 +163,19 @@ export default class PlayGame extends Phaser.Scene {
 
   moveShip(ship, speed) {
     ship.y += speed;
-    if (ship.y > 272) this.resetShipPosition(ship);
+    if (ship.y > this.game.config.height) this.resetShipPosition(ship);
   }
 
   resetShipPosition(ship) {
     ship.y = 0;
-    const width = 256;
+    const width = this.game.config.width;
     // const height = 272
     const random = Phaser.Math.Between(0, width);
     ship.x = random;
   }
 
   destroyShip(pointer, gameObj) {
-    this.explotionEffect.play()
+    // this.explotionEffect.play()
     gameObj.setTexture("explotion");
     gameObj.play("explotion_anims");
   }
@@ -175,44 +194,50 @@ export default class PlayGame extends Phaser.Scene {
 
   shootBeam() {
     const beam = new Beam(this);
-    this.laserEffect.play()
+    // this.laserEffect.play()
   }
 
   hurtPlayer(player, enemy) {
     this.resetShipPosition(enemy);
 
-    if(this.player.alpha < 1) return
+    if (this.player.alpha < 1) return;
 
     const explode = new Explotion(this, player.x, player.y);
-    player.disableBody(true, true)
+    player.disableBody(true, true);
 
-    // this.resetPlayer()
+    this.score = 0;
+    this.scoreBoard.text = "SCORE " + this.score || 0;
+
     this.time.addEvent({
       delay: 1000,
       callback: this.resetPlayer,
       callbackScope: this,
-      loop: false
-    })
-    
+      loop: false,
+    });
   }
 
-  resetPlayer(){
+  resetPlayer() {
     const x = this.game.config.width / 2 - 8;
     const y = this.game.config.height - 64;
-    this.player.enableBody(true, x, y, true, true)
+    this.player.enableBody(true, x, y, true, true);
 
-    this.player.alpha = 0.5
+    this.player.alpha = 0.5;
 
     const tween = this.tweens.add({
       targets: this.player,
       y: this.game.config.height - 64,
-      ease: 'Power1',
+      ease: "Power1",
       duration: 1200,
-      repeat: 0, 
-      onComplete: (() => {
-        this.player.alpha = 1
-      }),
-      callbackScope: this
-    })
+      repeat: 0,
+      onComplete: () => {
+        this.player.alpha = 1;
+      },
+      callbackScope: this,
+    });
+  }
+
+  addHeart(x, y) {
+    // TODO: should add heart to this game
+    this.add.sprite(x, y, "heart");
   }
 }
