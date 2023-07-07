@@ -10,7 +10,7 @@
 ## Todos
 
 * Create scene for choose type of tile, ship, and enemies
-* Have to build Health System
+* Create Health System
 * And many more!
 
 > You can refer to this Phaser Official site for more information ([Phaser](https://phaser.io/)) / ([Labs Phaser](https://labs.phaser.io/))
