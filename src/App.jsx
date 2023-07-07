@@ -9,8 +9,8 @@ function App() {
 
   useEffect(() => {
     const game = new Phaser.Game({
-      width: 256,
-      height: 272,
+      width: 1056,
+      height: 530,
       parent: 'game-content',
       scene: [
         BootScene, PlayGame
